@@ -155,7 +155,7 @@ class EloManager:
 if __name__ == "__main__":
 	manager = EloManager()
 
-	manager.loadMatchesResultFromXml("match.xml")
+	manager.loadMatchesResultFromXml("matchExample.xml")
 	tmp = manager.getPlayersListByRating(1180,1240)
 
 	#manager.addNewPlayer("ASDF")
