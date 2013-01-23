@@ -8,6 +8,7 @@ MAX_INCREASE_RATING = 40
 DEFAULT_DB_NAME = "EloManager"
 
 import uuid
+import xml.etree.ElementTree as ET
 
 class Player:
 	def __init__(self, name, rating=INITIAL_RATING, win=0, loss=0, uuid=str(uuid.uuid1())):
@@ -40,11 +41,34 @@ class EloManager:
 		print("Manager Init...")
 		self.playersList = []
 
-	def savePlayersListToRedis(self, address, port=27910, dbName=DEFAULT_DB_NAME):
-		print("tmp")
+	def loadMatchesResultFromXml(self, xmlPath):
+		# RETURN CODE 0 - fail 1 - success
+		print("loading matches result file...")
+		tree = ET.parse(xmlPath)
+		resultXmlRoot = tree.getroot()
+		if resultXmlRoot.tag != "elomanager":
+			print("ERROR: incorrect xml file")
+			return 0
+		else:
+			for match in resultXmlRoot.iter("match"):
+				winner = match.find("winner").text
+				loser = match.find("loser").text
 
-	def loadPlayersListFromRedis(self, address, port=27910, dbName=DEFAULT_DB_NAME):
-		print("TMP")
+				if self.getPlayerByName(winner) == None:
+					self.addNewPlayer(winner)
+				if self.getPlayerByName(loser) == None:
+					self.addNewPlayer(loser)
+
+				self.setResultByName(winner, loser)
+			
+			print("load success!")
+			return 1
+
+	def savePlayersListToXml(self, xmlPath):
+		print("saving players list file...")
+
+	def loadPlayersListFromXml(self, xmlPath):
+		print("loading players list file...")
 
 	def isEmptyPlayersList(self):
 		if len(playersList) == 0:
@@ -72,18 +96,20 @@ class EloManager:
 		for player in self.playersList:
 			if targetUUID == player.uuid:
 				return player
+		return None
 
 	def getPlayerByName(self, targetName):
 		for player in self.playersList:
 			if targetName == player.name:
 				return player
+		return None
 
 	def getPlayersListByRating(self, minRating, maxRating):
 		resultsList = []
 		for player in self.playersList:
 			playerRating = player.getRating()
-			if playerRating >= int(minRating) & playerRating <= int(maxRating):
-				print("rating : " + str(playerRating))
+			if playerRating >= int(minRating) and playerRating <= int(maxRating):
+				#print("rating : " + str(playerRating)) DEBUG CODE
 				resultsList.append(player)
 		return resultsList
 
@@ -116,28 +142,36 @@ class EloManager:
 		 "] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
 
 	def setResultByName(self, winUserName, lossUserName):
+		if winUserName == lossUserName:
+			return 0
+
 		tmpWinUser = self.getPlayerByName(winUserName)
 		tmpLossUser = self.getPlayerByName(lossUserName)
 
 		self.setResult(tmpWinUser, tmpLossUser)
 
+		return 1
+
 if __name__ == "__main__":
 	manager = EloManager()
 
-	manager.addNewPlayer("ASDF")
-	manager.addNewPlayer("rokucha")
-	manager.addNewPlayer("1234")
-	manager.addNewPlayer("666")
+	manager.loadMatchesResultFromXml("match.xml")
+	tmp = manager.getPlayersListByRating(1180,1240)
 
-	asdf = manager.getPlayerByName("ASDF")
-	rokucha = manager.getPlayerByName("rokucha")
-	numbers = manager.getPlayerByName("1234")
-	devil = manager.getPlayerByName("666")
+	#manager.addNewPlayer("ASDF")
+	#manager.addNewPlayer("rokucha")
+	#manager.addNewPlayer("1234")
+	#manager.addNewPlayer("666")
 
-	manager.setResultByName(winUserName="666", lossUserName="1234")
+	#asdf = manager.getPlayerByName("ASDF")
+	#rokucha = manager.getPlayerByName("rokucha")
+	#numbers = manager.getPlayerByName("1234")
+	#devil = manager.getPlayerByName("666")
+
+	#manager.setResultByName(winUserName="666", lossUserName="1234")
+	#manager.setResultByName(winUserName="ASDF", lossUserName="1234")
+	#manager.setResultByName(winUserName="rokucha", lossUserName="1234")
 
 	#playerOne = manager.getPlayerByName("PUSUNGWI")
 	#playerTwo = manager.getPlayerByName("ADFASDF")
 	#playerThree = manager.getPlayerByName("HAHAHAH")
-
-	tmp = manager.getPlayersListByRating(1180,1200)
