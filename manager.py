@@ -6,6 +6,7 @@
 INITIAL_RATING = 1200
 MAX_INCREASE_RATING = 40
 DEFAULT_DB_NAME = "EloManager"
+DEBUG_MODE = 1
 
 import uuid
 import xml.etree.ElementTree as ET
@@ -19,7 +20,7 @@ class Player:
 		self.loss = 0
 
 	def __str__(self):
-		return("Name : " + self.name + " Rating : " + str(self.rating) + " Win : " + str(self.win) + " Loss : " + str(self.loss))
+		return("Name : " + self.name + "	Rating : " + str(self.rating) + " Win : " + str(self.win) + " Loss : " + str(self.loss))
 
 	def getRating(self):
 		return self.rating
@@ -156,7 +157,12 @@ if __name__ == "__main__":
 	manager = EloManager()
 
 	manager.loadMatchesResultFromXml("matchExample.xml")
-	tmp = manager.getPlayersListByRating(1180,1240)
+	tmp = manager.getPlayersList()
+
+	print("searching...")
+	for player in tmp:
+		print(player)
+	print("END")
 
 	#manager.addNewPlayer("ASDF")
 	#manager.addNewPlayer("rokucha")
