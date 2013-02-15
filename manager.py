@@ -8,16 +8,21 @@ MAX_INCREASE_RATING = 40
 DEFAULT_DB_NAME = "EloManager"
 DEBUG_MODE = 1
 
-import uuid
+from datetime import datetime
+from uuid import uuid4
 import xml.etree.ElementTree as ET
 
 class Player:
-	def __init__(self, name, rating=INITIAL_RATING, win=0, loss=0, uuid=str(uuid.uuid1())):
+	def __init__(self, name, uuid=None, rating=INITIAL_RATING, win=0, loss=0):
 		self.name = name
-		self.uuid = uuid
+		if uuid == None:
+			self.uuid = uuid4()
+		else:
+			self.uuid = uuid
 		self.rating = rating
 		self.win = 0
 		self.loss = 0
+		self.history = []
 
 	def __str__(self):
 		return("Name : " + self.name + "	Rating : " + str(self.rating) + " Win : " + str(self.win) + " Loss : " + str(self.loss))
@@ -65,10 +70,10 @@ class EloManager:
 			print("load success!")
 			return 1
 
-	def savePlayersListToXml(self, xmlPath):
+	def exportPlayersListToXml(self, xmlPath):
 		print("saving players list file...")
 
-	def loadPlayersListFromXml(self, xmlPath):
+	def importPlayersListFromXml(self, xmlPath):
 		print("loading players list file...")
 
 	def isEmptyPlayersList(self):
@@ -131,6 +136,7 @@ class EloManager:
 				break
 
 	def setResult(self, winUser, lossUser):
+		currTimeStamp = datetime.timestamp(datetime.today())
 		incDecRating = round(MAX_INCREASE_RATING * 1 / (1 + 10 ** ((winUser.rating - lossUser.rating) / 400)))
 		
 		winUser.win += 1
@@ -138,6 +144,10 @@ class EloManager:
 		
 		winUser.rating += incDecRating
 		lossUser.rating -= incDecRating
+
+		#DICT INFO : result 0 - loss, 1 - win, opponentUUID - nuff said.
+		winUser.history.append({'result': 1,'opponentUUID': lossUser.uuid, 'date':currTimeStamp})
+		lossUser.history.append({'result': 0,'opponentUUID': winUser.uuid, 'date':currTimeStamp})
 
 		print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) +
 		 "] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
@@ -161,9 +171,10 @@ if __name__ == "__main__":
 
 	print("searching...")
 	for player in tmp:
-		print(player)
+		print(player.uuid)
 	print("END")
 
+	#some kind of old debug code
 	#manager.addNewPlayer("ASDF")
 	#manager.addNewPlayer("rokucha")
 	#manager.addNewPlayer("1234")

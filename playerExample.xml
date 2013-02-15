@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<elomanager>
+	<player>
+		<name>stork</winner>
+		<uuid>23877832-95bb-4945-bae3-578f04cab965</uuid>
+		<rating>1230</rating>
+		<winCount>10</winCount>
+		<lossCount>5</lossCount>
+		<history>
+			<match>
+				<result>0</result>
+				<opponentUUID>2634d587-bb15-43dc-bc9a-714ddef44db2</opponentUUID>
+				<date>1360901076.334811</date>
+			</match>
+		</history>
+	</player>
+</elomanager>

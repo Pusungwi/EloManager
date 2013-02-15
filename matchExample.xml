@@ -3,6 +3,7 @@
 	<match>
 		<winner>stork</winner>
 		<loser>pusungwi</loser>
+		<date>1970. 01. 02</date>
 	</match>
 	<match>
 		<winner>flash</winner>
@@ -83,6 +84,14 @@
 	<match>
 		<winner>hawk</winner>
 		<loser>grrrr</loser>
+	</match>
+	<match>
+		<winner>flash</winner>
+		<loser>jaedong</loser>
+	</match>
+	<match>
+		<winner>flash</winner>
+		<loser>jaedong</loser>
 	</match>
 </elomanager>
 	
