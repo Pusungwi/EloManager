@@ -1,15 +1,20 @@
 <?xml version="1.0"?>
 <elomanager>
 	<player>
-		<name>stork</winner>
+		<name>stork</name>
 		<uuid>23877832-95bb-4945-bae3-578f04cab965</uuid>
-		<rating>1230</rating>
-		<winCount>10</winCount>
-		<lossCount>5</lossCount>
+		<rating>1280</rating>
+		<winCount>2</winCount>
+		<lossCount>0</lossCount>
 		<history>
 			<match>
-				<result>0</result>
+				<result>1</result>
 				<opponentUUID>2634d587-bb15-43dc-bc9a-714ddef44db2</opponentUUID>
+				<date>1360901076.334811</date>
+			</match>
+			<match>
+				<result>1</result>
+				<opponentUUID>f3e431f1-ea2d-4c24-908f-262791110edb</opponentUUID>
 				<date>1360901076.334811</date>
 			</match>
 		</history>

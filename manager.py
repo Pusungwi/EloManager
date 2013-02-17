@@ -20,8 +20,8 @@ class Player:
 		else:
 			self.uuid = uuid
 		self.rating = rating
-		self.win = 0
-		self.loss = 0
+		self.win = win
+		self.loss = loss
 		self.history = []
 
 	def __str__(self):
@@ -75,6 +75,29 @@ class EloManager:
 
 	def importPlayersListFromXml(self, xmlPath):
 		print("loading players list file...")
+		tree = ET.parse(xmlPath)
+		resultXmlRoot = tree.getroot()
+		if resultXmlRoot.tag != "elomanager":
+			print("ERROR: incorrect xml file")
+			return 0
+		else:
+			for player in resultXmlRoot.iter("player"):
+				playerName = player.find('name').text
+				playerUUID = player.find('uuid').text
+				playerRating = int(player.find('rating').text)
+				playerWinCount = int(player.find('winCount').text)
+				playerLossCount = int(player.find('lossCount').text)
+
+				tmpPlayer = Player(playerName, uuid=playerUUID, rating=playerRating, win=playerWinCount, loss=playerLossCount)
+
+				#get match result
+				for match in player.iter('match'):
+					matchDict = {'result':int(match.find('result').text), 'opponentUUID':match.find('opponentUUID').text, 'date':float(match.find('date').text)}
+					tmpPlayer.history.append(matchDict)
+
+				self.appendPlayerByClass(tmpPlayer)
+			print("load success!")
+			return 1
 
 	def isEmptyPlayersList(self):
 		if len(playersList) == 0:
@@ -115,17 +138,19 @@ class EloManager:
 		for player in self.playersList:
 			playerRating = player.getRating()
 			if playerRating >= int(minRating) and playerRating <= int(maxRating):
-				#print("rating : " + str(playerRating)) DEBUG CODE
+				if DEBUG_MODE == 1:
+					print("getPlayersListByRating - rating : " + str(playerRating)) DEBUG CODE
 				resultsList.append(player)
 		return resultsList
 
-	def appendPlayer(self, player):
-		type(player)
+	def appendPlayerByClass(self, player):
+		# NEED SOME CLASS CHECK METHOD
+		self.playersList.append(player)
 
 	def addNewPlayer(self, name):
 		if self.isAvailablePlayerName(name) == 1:
 			tmpPlayer = Player(name)
-			self.playersList.append(tmpPlayer)
+			self.appendPlayerByClass(tmpPlayer)
 		else:
 			print("ERROR: not available this name") 
 
@@ -149,8 +174,9 @@ class EloManager:
 		winUser.history.append({'result': 1,'opponentUUID': lossUser.uuid, 'date':currTimeStamp})
 		lossUser.history.append({'result': 0,'opponentUUID': winUser.uuid, 'date':currTimeStamp})
 
-		print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) +
-		 "] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
+		if DEBUG_MODE == 1:
+			print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) +
+		 	"] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
 
 	def setResultByName(self, winUserName, lossUserName):
 		if winUserName == lossUserName:
@@ -166,29 +192,15 @@ class EloManager:
 if __name__ == "__main__":
 	manager = EloManager()
 
-	manager.loadMatchesResultFromXml("matchExample.xml")
+	#matches result test code
+	#manager.loadMatchesResultFromXml("matchExample.xml")
+	#tmp = manager.getPlayersList()
+
+	#player list xml test code
+	manager.importPlayersListFromXml('playerExample.xml')
 	tmp = manager.getPlayersList()
 
-	print("searching...")
+	print("init test...")
 	for player in tmp:
-		print(player.uuid)
+		print(player)
 	print("END")
-
-	#some kind of old debug code
-	#manager.addNewPlayer("ASDF")
-	#manager.addNewPlayer("rokucha")
-	#manager.addNewPlayer("1234")
-	#manager.addNewPlayer("666")
-
-	#asdf = manager.getPlayerByName("ASDF")
-	#rokucha = manager.getPlayerByName("rokucha")
-	#numbers = manager.getPlayerByName("1234")
-	#devil = manager.getPlayerByName("666")
-
-	#manager.setResultByName(winUserName="666", lossUserName="1234")
-	#manager.setResultByName(winUserName="ASDF", lossUserName="1234")
-	#manager.setResultByName(winUserName="rokucha", lossUserName="1234")
-
-	#playerOne = manager.getPlayerByName("PUSUNGWI")
-	#playerTwo = manager.getPlayerByName("ADFASDF")
-	#playerThree = manager.getPlayerByName("HAHAHAH")
