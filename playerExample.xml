@@ -19,4 +19,18 @@
 			</match>
 		</history>
 	</player>
+	<player>
+		<name>jaedong</name>
+		<uuid>2634d587-bb15-43dc-bc9a-714ddef44db2</uuid>
+		<rating>1180</rating>
+		<winCount>0</winCount>
+		<lossCount>1</lossCount>
+		<history>
+			<match>
+				<result>0</result>
+				<opponentUUID>23877832-95bb-4945-bae3-578f04cab965</opponentUUID>
+				<date>1360901076.334811</date>
+			</match>
+		</history>
+	</player>
 </elomanager>

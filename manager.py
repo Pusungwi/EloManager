@@ -65,7 +65,7 @@ class EloManager:
 				if self.getPlayerByName(loser) == None:
 					self.addNewPlayer(loser)
 
-				self.setResultByName(winner, loser)
+				self.setResultByPlayerName(winner, loser)
 			
 			print("load success!")
 			return 1
@@ -117,7 +117,6 @@ class EloManager:
 
 		return returnCode
 
-
 	def getPlayersList(self):
 		return self.playersList
 
@@ -139,9 +138,14 @@ class EloManager:
 			playerRating = player.getRating()
 			if playerRating >= int(minRating) and playerRating <= int(maxRating):
 				if DEBUG_MODE == 1:
-					print("getPlayersListByRating - rating : " + str(playerRating)) DEBUG CODE
+					print("getPlayersListByRating - rating : " + str(playerRating))
 				resultsList.append(player)
 		return resultsList
+
+	def printAllPlayersStatus(self):
+		tmpList = self.getPlayersList()
+		for player in tmpList:
+			print(player)
 
 	def appendPlayerByClass(self, player):
 		# NEED SOME CLASS CHECK METHOD
@@ -151,8 +155,10 @@ class EloManager:
 		if self.isAvailablePlayerName(name) == 1:
 			tmpPlayer = Player(name)
 			self.appendPlayerByClass(tmpPlayer)
-		else:
-			print("ERROR: not available this name") 
+
+			return True
+		else:			
+			return False 
 
 	def removePlayerByName(self, targetName):
 		for player in self.playersList:
@@ -178,16 +184,29 @@ class EloManager:
 			print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) +
 		 	"] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
 
-	def setResultByName(self, winUserName, lossUserName):
+	def setResultByPlayerName(self, winUserName, lossUserName):
 		if winUserName == lossUserName:
-			return 0
+			return False
 
 		tmpWinUser = self.getPlayerByName(winUserName)
 		tmpLossUser = self.getPlayerByName(lossUserName)
 
 		self.setResult(tmpWinUser, tmpLossUser)
 
-		return 1
+		return True
+
+	def setResultByPlayerUUID(self, winUserUUID, lossUserUUID):
+		if winUserUUID == lossUserUUID:
+			return False
+
+		tmpWinUser = self.getPlayerByUUID(winUserUUID)
+		tmpLossUser = self.getPlayerByUUID(lossUserUUID)
+
+		self.setResult(tmpWinUser, tmpLossUser)
+
+		return True
+
+
 
 if __name__ == "__main__":
 	manager = EloManager()
@@ -200,7 +219,16 @@ if __name__ == "__main__":
 	manager.importPlayersListFromXml('playerExample.xml')
 	tmp = manager.getPlayersList()
 
-	print("init test...")
-	for player in tmp:
-		print(player)
-	print("END")
+	manager.printAllPlayersStatus()
+
+	#example raw use code
+	playerNamesList = ['jaedong', 'yoda', 'god']
+	for playerName in playerNamesList:
+		addResult = manager.addNewPlayer(playerName)
+		if addResult == False:
+			print('ERROR: ' + playerName + ' is not available name (or exist name)')
+
+	manager.setResultByPlayerName(winUserName='jaedong', lossUserName='god')
+	manager.setResultByPlayerName(winUserName='stork', lossUserName='jaedong')
+
+	manager.printAllPlayersStatus()
