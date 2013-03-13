@@ -193,8 +193,8 @@ class EloManager:
 		lossUser.history.append({'result': 0,'opponentUUID': winUser.uuid, 'date':currTimeStamp})
 
 		if self.debugMode == 1:
-			print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) +
-		 	"] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
+			print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) + "(+" + str(incDecRating) + ")" +
+		 	"] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "(-" + str(incDecRating) + ")" + "]")
 
 	def setResultByPlayerName(self, winUserName, lossUserName):
 		if winUserName == lossUserName:
