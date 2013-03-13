@@ -60,6 +60,9 @@ class EloManager:
 		self.debugMode = debug
 
 	def loadMatchesResultFromXml(self, xmlPath):
+		# import matches result to xml file and returning success or fail
+		# for more information in sample xml file (matchExample.xml)
+
 		# RETURN CODE 0 - fail 1 - success
 		print("loading matches result file...")
 		tree = ET.parse(xmlPath)
@@ -83,9 +86,12 @@ class EloManager:
 			return 1
 
 	def exportPlayersListToXml(self, xmlPath):
+		#TODO: export all player information to xml method
 		print("saving players list file...")
 
 	def importPlayersListFromXml(self, xmlPath):
+		#import all player information to xml method
+		#for more format information, read playerExample.xml
 		print("loading players list file...")
 		tree = ET.parse(xmlPath)
 		resultXmlRoot = tree.getroot()
@@ -112,12 +118,18 @@ class EloManager:
 			return 1
 
 	def isEmptyPlayersList(self):
+		# check player list is empty
+		# use EloManager is initialized or not.
+
 		if len(playersList) == 0:
 			return 0
 		else:
 			return 1
 
 	def isAvailablePlayerName(self, playerName):
+		# checking player name is already using or not method
+
+		# and return code
 		#RETURN CODE TYPE : 1 - no problem, 0 - somebody already use this name
 		returnCode = 1
 
@@ -130,21 +142,25 @@ class EloManager:
 		return returnCode
 
 	def getPlayersList(self):
+		# return all player class list method.
 		return self.playersList
 
 	def getPlayerByUUID(self, targetUUID):
+		# get and return player class by player UUID
 		for player in self.playersList:
 			if targetUUID == player.uuid:
 				return player
 		return None
 
 	def getPlayerByName(self, targetName):
+		# get and return player class by player name
 		for player in self.playersList:
 			if targetName == player.name:
 				return player
 		return None
 
 	def getPlayersListByRating(self, minRating, maxRating):
+		# get players in rating area to minRating and maxRating and return list.
 		resultsList = []
 		for player in self.playersList:
 			playerRating = player.getRating()
@@ -155,15 +171,18 @@ class EloManager:
 		return resultsList
 
 	def printAllPlayersStatus(self):
+		# get all player class and print information method
 		tmpList = self.getPlayersList()
 		for player in tmpList:
 			print(player)
 
 	def appendPlayerByClass(self, player):
+		# add already maded player class in EloManager method
 		# NEED SOME CLASS CHECK METHOD
 		self.playersList.append(player)
 
 	def addNewPlayer(self, name):
+		# add brand new player to name string method
 		if self.isAvailablePlayerName(name) == 1:
 			tmpPlayer = Player(name, rating=self.initialRating)
 			self.appendPlayerByClass(tmpPlayer)
@@ -173,12 +192,14 @@ class EloManager:
 			return False 
 
 	def removePlayerByName(self, targetName):
+		# remove player by name in EloManager class method
 		for player in self.playersList:
 			if targetName == player.name:
 				self.playersList.remove(player)
 				break
 
 	def setResult(self, winUser, lossUser):
+		# get winUser and lossUser class. and calculating increase/decrease point and apply method  
 		currTimeStamp = datetime.timestamp(datetime.today())
 		incDecRating = round(self.maxIncreaseRating * 1 / (1 + 10 ** ((winUser.rating - lossUser.rating) / 400)))
 		
@@ -197,6 +218,7 @@ class EloManager:
 		 	"] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "(-" + str(incDecRating) + ")" + "]")
 
 	def setResultByPlayerName(self, winUserName, lossUserName):
+		# get player winner/loser name, load class. and execute setResult method
 		if winUserName == lossUserName:
 			return False
 
@@ -208,6 +230,7 @@ class EloManager:
 		return True
 
 	def setResultByPlayerUUID(self, winUserUUID, lossUserUUID):
+		# get player winner/loser UUID, load class. and execute setResult method
 		if winUserUUID == lossUserUUID:
 			return False
 
@@ -220,6 +243,7 @@ class EloManager:
 
 
 if __name__ == "__main__":
+	#unit test code
 	manager = EloManager(initRating=2000, maxIncRating=100, debug=True)
 
 	#matches result test code
