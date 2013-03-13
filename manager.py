@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 
-# EloManager v0.1
+# EloManager v0.2
 # Author : Yi 'Pusungwi' Yeon Jae
-
-INITIAL_RATING = 1200
-MAX_INCREASE_RATING = 40
-DEFAULT_DB_NAME = "EloManager"
-DEBUG_MODE = 1
 
 from datetime import datetime
 from uuid import uuid4
 import xml.etree.ElementTree as ET
 
+DEFAULT_DB_NAME = "EloManager"
+DEFAULT_INITIAL_RATING = 1200
+DEFAULT_INCREASE_RATING = 40
+
 class Player:
-	def __init__(self, name, uuid=None, rating=INITIAL_RATING, win=0, loss=0):
+	def __init__(self, name, rating, uuid=None, win=0, loss=0):
+		#player information init method
+		#name = player Name, uuid = player identify id (type = UUID4) rating = player Rating, win = player win count, loss = player loss count
 		self.name = name
 		if uuid == None:
 			self.uuid = uuid4()
@@ -25,27 +26,38 @@ class Player:
 		self.history = []
 
 	def __str__(self):
+		# if player class in print(). then print all player information
 		return("Name : " + self.name + "	Rating : " + str(self.rating) + " Win : " + str(self.win) + " Loss : " + str(self.loss))
 
 	def getRating(self):
+		# return player rating to type Integer
 		return self.rating
 
 	def getName(self):
+		# return player name to type String
 		return self.name
 
 	def getWinCount(self):
+		# return player winning count to type Integer
 		return self.win
 
 	def getLossCount(self):
+		# return player loss count to type Integer
 		return self.loss
 
 	def getPlayerUUID(self):
+		# return player identificial uuid to type String
 		return self.uuid
 
 class EloManager:
-	def __init__(self):
+	def __init__(self, initRating=DEFAULT_INITIAL_RATING, maxIncRating=DEFAULT_INCREASE_RATING, defDBName=DEFAULT_DB_NAME, debug=False):
+		#EloManager main class init method
 		print("Manager Init...")
 		self.playersList = []
+		self.initialRating = initRating
+		self.maxIncreaseRating = maxIncRating
+		self.defaultDBName = defDBName
+		self.debugMode = debug
 
 	def loadMatchesResultFromXml(self, xmlPath):
 		# RETURN CODE 0 - fail 1 - success
@@ -153,7 +165,7 @@ class EloManager:
 
 	def addNewPlayer(self, name):
 		if self.isAvailablePlayerName(name) == 1:
-			tmpPlayer = Player(name)
+			tmpPlayer = Player(name, rating=self.initialRating)
 			self.appendPlayerByClass(tmpPlayer)
 
 			return True
@@ -168,7 +180,7 @@ class EloManager:
 
 	def setResult(self, winUser, lossUser):
 		currTimeStamp = datetime.timestamp(datetime.today())
-		incDecRating = round(MAX_INCREASE_RATING * 1 / (1 + 10 ** ((winUser.rating - lossUser.rating) / 400)))
+		incDecRating = round(self.maxIncreaseRating * 1 / (1 + 10 ** ((winUser.rating - lossUser.rating) / 400)))
 		
 		winUser.win += 1
 		lossUser.loss += 1
@@ -180,7 +192,7 @@ class EloManager:
 		winUser.history.append({'result': 1,'opponentUUID': lossUser.uuid, 'date':currTimeStamp})
 		lossUser.history.append({'result': 0,'opponentUUID': winUser.uuid, 'date':currTimeStamp})
 
-		if DEBUG_MODE == 1:
+		if self.debugMode == 1:
 			print("[Winner : " + winUser.name + " W:" + str(winUser.win) + " L:" + str(winUser.loss) + " Rating:" + str(winUser.rating) +
 		 	"] [Loser : " + lossUser.name + " W:" + str(lossUser.win) + " L:" + str(lossUser.loss) + " Rating:" + str(lossUser.rating) + "]")
 
@@ -207,9 +219,8 @@ class EloManager:
 		return True
 
 
-
 if __name__ == "__main__":
-	manager = EloManager()
+	manager = EloManager(initRating=2000, maxIncRating=100, debug=True)
 
 	#matches result test code
 	#manager.loadMatchesResultFromXml("matchExample.xml")
